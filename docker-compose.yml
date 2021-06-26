@@ -1,0 +1,16 @@
+version: "3"
+services:
+  mysql:
+    image: "mysql:8.0.25"
+    container_name: "mysql"
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: BMS
+      MYSQL_USER: bms
+      MYSQL_PASSWORD: bms
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/conf.d:/etc/mysql/conf.d
