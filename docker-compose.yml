@@ -11,6 +11,12 @@ services:
       MYSQL_DATABASE: BMS
       MYSQL_USER: bms
       MYSQL_PASSWORD: bms
+    # Windons 에서 호스트 권한으로 볼륨 파일이 복사가 되서 777로 설정이됨. COPY한 설정파일의 권한 644로 변경하는 Command
+    command: >
+      bash -c "
+      chmod 644 /etc/mysql/conf.d/*.cnf
+      && /entrypoint.sh mysqld
+      "
     volumes:
       - ./docker/mysql/data:/var/lib/mysql
       - ./docker/mysql/conf.d:/etc/mysql/conf.d

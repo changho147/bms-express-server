@@ -1,12 +1,9 @@
-import {Column, PrimaryGeneratedColumn} from "typeorm";
+import {Column} from "typeorm";
+import {EntityWithSequenceAndTime} from "@src/entities/abstracts/entity-with-sequence-and-time";
+import {Expose} from "class-transformer";
 
-export abstract class EntityWithSequenceAndTimeAndUser {
-    @PrimaryGeneratedColumn({
-        name: "ENTITY_ID",
-        type: "bigint"
-    })
-    entityId: number;
-
+export abstract class EntityWithSequenceAndTimeAndUser extends EntityWithSequenceAndTime {
+    @Expose()
     @Column({
         name: "REG_USER",
         type: "varchar",
@@ -14,13 +11,7 @@ export abstract class EntityWithSequenceAndTimeAndUser {
     })
     regUser: string;
 
-    @Column({
-        name: "REG_DATE",
-        type: "timestamp",
-        default: () => 'CURRENT_TIMESTAMP'
-    })
-    regDate: Date;
-
+    @Expose()
     @Column({
         name: "MOD_USER",
         type: "varchar",
@@ -28,12 +19,4 @@ export abstract class EntityWithSequenceAndTimeAndUser {
         length: 50
     })
     modUser: string;
-
-    @Column({
-        name: "MOD_DATE",
-        type: "timestamp",
-        nullable: true,
-        onUpdate: 'CURRENT_TIMESTAMP'
-    })
-    modDate: Date;
 }

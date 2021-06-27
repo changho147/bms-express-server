@@ -1,5 +1,5 @@
 import {Inject, Service} from "typedi";
-import {Authorized, Get, JsonController} from "routing-controllers";
+import {Authorized, CurrentUser, Get, JsonController} from "routing-controllers";
 import {UserService} from "@src/services/user/user-service";
 import {User} from "@src/entities/user/user";
 
@@ -11,7 +11,7 @@ export class UserController {
     private userService: UserService;
 
     @Get("/users")
-    public async find(): Promise<User[]> {
+    public async find(@CurrentUser() user: User): Promise<User[]> {
         return await this.userService.find();
     }
 

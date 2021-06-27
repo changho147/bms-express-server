@@ -1,6 +1,7 @@
 import {User} from "@src/entities/user/user";
 import {Service} from "typedi";
 import {EntityRepository, Repository, SelectQueryBuilder} from "typeorm";
+import {plainToClass} from "class-transformer";
 
 @Service()
 @EntityRepository(User)
@@ -10,9 +11,31 @@ export class UserRepository extends Repository<User> {
         return await queryBuilder.getMany();
     }
 
+    public async findByToken(refreshToken: string): Promise<User | undefined> {
+        const found: User = plainToClass(
+            User,
+            await super
+                .createQueryBuilder()
+                .select("ENTITY_ID as entityId, EMAIL as email, NAME as name")
+                .where("REFRESH_TOKEN = :refreshToken", {refreshToken})
+                .andWhere("ACTIVE_YN = 'Y'")
+                .getRawOne<User>()
+        );
+        if (!found) return undefined;
+
+        return found;
+    }
+
     public async login(entity: User): Promise<User | undefined> {
-        const found = await super.createQueryBuilder().where("EMAIL = :email", {email: entity.email}).andWhere("ACTIVE_YN = 'Y'").getOne();
-        console.log(found);
+        const found: User = plainToClass(
+            User,
+            await super
+                .createQueryBuilder()
+                .select("ENTITY_ID as entityId, EMAIL as email, NAME as name, PASSWORD as password")
+                .where("EMAIL = :email", {email: entity.email})
+                .andWhere("ACTIVE_YN = 'Y'")
+                .getRawOne<User>()
+        );
         if (!found) return undefined;
 
         const isPasswordMatched: boolean = await found.comparePassword(entity.password);
@@ -22,6 +45,10 @@ export class UserRepository extends Repository<User> {
     }
 
     public async signUp(entity: User): Promise<User> {
+        return await this.save(entity, {reload: true});
+    }
+
+    public async updateRefreshToken(entity: User): Promise<User> {
         return await this.save(entity, {reload: true});
     }
 
