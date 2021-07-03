@@ -38,17 +38,20 @@ export class UserRepository extends Repository<User> {
         );
         if (!found) return undefined;
 
-        const isPasswordMatched: boolean = await found.comparePassword(entity.password);
+        const isPasswordMatched: boolean = await found.comparePassword(entity.password!);
         if (!isPasswordMatched) return undefined;
 
         return found;
     }
 
-    public async signUp(entity: User): Promise<User> {
+    public async signUp<T>(entity: User): Promise<User> {
+        const user = await this.save(entity, {reload: true});
+
+
         return await this.save(entity, {reload: true});
     }
 
-    public async updateRefreshToken(entity: User): Promise<User> {
+    public async updateRefreshToken(entity: User): Promise<User | undefined> {
         return await this.save(entity, {reload: true});
     }
 
@@ -56,5 +59,9 @@ export class UserRepository extends Repository<User> {
         const found = await super.createQueryBuilder().where("email = :email", {email}).getOne();
 
         return !!found;
+    }
+
+    private setProperty() {
+
     }
 }

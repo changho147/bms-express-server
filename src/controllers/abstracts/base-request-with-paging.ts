@@ -1,10 +1,6 @@
-import {EntityWithSequence} from "@src/entities/abstracts/entity-with-sequence";
-import {EntityWithSequenceAndTime} from "@src/entities/abstracts/entity-with-sequence-and-time";
-import {EntityWithSequenceAndTimeAndUser} from "@src/entities/abstracts/entity-with-sequence-and-time-and-user";
+import {BaseRequest} from "@src/controllers/abstracts/base-request";
 
-export abstract class BaseRequestWithPaging {
-    [index: string]: any;
-
+export abstract class BaseRequestWithPaging extends BaseRequest {
     page: number | 1;
     countPerPage: number | 30;
 
@@ -18,15 +14,5 @@ export abstract class BaseRequestWithPaging {
 
     public getNext(): number {
         return this.countPerPage + 1;
-    }
-
-    public toEntity<T extends EntityWithSequence | EntityWithSequenceAndTime | EntityWithSequenceAndTimeAndUser>(Clazz: new (...args: any[]) => T): T {
-        const entity = new Clazz();
-        const entityProperties = Reflect.ownKeys(entity);
-        entityProperties.forEach(property => {
-            if (Reflect.has(this, property)) Reflect.set(entity, property, this[property as string]);
-        });
-
-        return entity as T;
     }
 }

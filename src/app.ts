@@ -21,12 +21,12 @@ export default class App {
         this.app = express();
     }
 
-    private async setDatabase(): Promise<void> {
+    protected async setDatabase(): Promise<void> {
         useTypeormContainer(typeormExtensions.Container);
         await createConnection(databaseConnectionConfigs);
     }
 
-    private async setMiddlewares(): Promise<void> {
+    protected async setMiddlewares(): Promise<void> {
         this.app.use(helmet());
         this.app.use(json());
         this.app.use(cors());
